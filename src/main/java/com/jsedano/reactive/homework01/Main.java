@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.reactivex.Observable;
+import io.reactivex.observables.ConnectableObservable;
+import io.reactivex.schedulers.Schedulers;
 
 public class Main {
 
@@ -23,15 +25,15 @@ public class Main {
         List<NewsItem> li = new ObjectMapper().readValue(is, new TypeReference<List<NewsItem>>(){});
 
 
-        Observable<NewsItem> observable = Observable.fromIterable(li);
+        ConnectableObservable<NewsItem> observable = Observable.fromIterable(li).publish();
 
-
+        
         observable.safeSubscribe(subscribersCollection.getSportsObserver());
         observable.safeSubscribe(subscribersCollection.getShowBusinessObserver());
         observable.safeSubscribe(subscribersCollection.getShowBusinessAndSportObserver());
         observable.safeSubscribe(subscribersCollection.getPoliticsObserver());
         observable.safeSubscribe(subscribersCollection.getSportsShowBusinessAndPoliticsObserver());
-
-
+        
+        observable.connect();
     }
 }
